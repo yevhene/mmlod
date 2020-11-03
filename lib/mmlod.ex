@@ -1,18 +1,17 @@
 defmodule Mmlod do
-  @moduledoc """
-  Documentation for `Mmlod`.
-  """
+  alias Mmlod.Lod
 
-  @doc """
-  Hello world.
+  def main(args) do
+    [file, resource] = args
 
-  ## Examples
+    {:ok, data} = File.read(file)
 
-      iex> Mmlod.hello()
-      :world
+    content =
+      data
+      |> Lod.load()
+      |> Lod.extract(resource)
 
-  """
-  def hello do
-    :world
+    {:ok, out} = File.open(resource, [:write])
+    IO.binwrite(out, content)
   end
 end

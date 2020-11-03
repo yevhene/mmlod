@@ -1,21 +1,15 @@
 # Mmlod
 
-**TODO: Add description**
+Utility to process Might & Magic 6, 7, 8 resource files (*.lod)
 
-## Installation
+## Usage
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `mmlod` to your list of dependencies in `mix.exs`:
-
-```elixir
-def deps do
-  [
-    {:mmlod, "~> 0.1.0"}
-  ]
-end
+### Build
+```bash
+$ mix build
 ```
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/mmlod](https://hexdocs.pm/mmlod).
-
+### Run
+```bash
+$ ./mmlod path/to/mm.lod resource
+```
