@@ -6,12 +6,12 @@ defmodule Mmlod do
 
     {:ok, data} = File.read(file)
 
-    content =
+    item =
       data
       |> Lod.load()
-      |> Lod.extract(resource)
+      |> Lod.find(resource)
 
     {:ok, out} = File.open(resource, [:write])
-    IO.binwrite(out, content)
+    IO.binwrite(out, item.content)
   end
 end

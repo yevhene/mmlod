@@ -17,7 +17,7 @@ defmodule Mmlod.Lod do
       rest::binary
     >> = data
 
-    {root, _} = Item.load(rest)
+    {[root], _} = Item.load(rest)
 
     lod = %Lod{
       signature: Utils.clean(signature),
@@ -34,19 +34,6 @@ defmodule Mmlod.Lod do
     Enum.find(root.items, fn item ->
       String.downcase(List.to_string(item.name)) == String.downcase(name)
     end)
-  end
-
-  def extract(%Lod{data: data} = lod, name) do
-    %Item{offset: item_offset, size: size} = Lod.find(lod, name)
-    offset = lod.root.offset + item_offset
-
-    <<
-      _::binary-size(offset),
-      content::binary-size(size),
-      _::binary
-    >> = data
-
-    content
   end
 end
 
