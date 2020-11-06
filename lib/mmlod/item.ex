@@ -1,11 +1,26 @@
 defmodule Mmlod.Item do
-  defstruct [:name, :f, :offset, :size, :length, :priority, items: nil, content: nil]
+  defstruct [
+    :name,
+    :f,
+    :offset,
+    :size,
+    :length,
+    :priority,
+    items: nil,
+    content: nil
+  ]
 
+  alias Mmlod.Sprite
   alias Mmlod.Item
   alias Mmlod.Utils
 
-  def load(data, count \\ 1) do
-    Enum.reduce(0..(count - 1), {[], data}, fn _, {list, rest} ->
+  def load(source) do
+    {[item], _} = load(source, 1)
+    item
+  end
+
+  def load(source, count) do
+    Enum.reduce(0..(count - 1), {[], source}, fn _, {list, rest} ->
       {item, rest} = load_header(rest)
 
       {item, rest} =
@@ -13,7 +28,7 @@ defmodule Mmlod.Item do
           {items, rest} = load(rest, item.length)
           {%{item | items: items}, rest}
         else
-          content = load_content(data, item.size, item.offset)
+          content = load_content(source, item.size, item.offset)
           {%{item | content: content}, rest}
         end
 
@@ -21,17 +36,17 @@ defmodule Mmlod.Item do
     end)
   end
 
-  defp load_header(data) do
+  defp load_header(source) do
     <<
       name::binary-size(15),
-      f::8-little,
-      offset::32-little,
-      size::32-little,
-      _::32-little,
-      length::16-little,
-      priority::16-little,
+      f::integer-unsigned-8-little,
+      offset::integer-unsigned-32-little,
+      size::integer-unsigned-32-little,
+      _::32,
+      length::integer-unsigned-16-little,
+      priority::integer-unsigned-16-little,
       rest::binary
-    >> = data
+    >> = source
 
     item = %Item{
       name: Utils.clean(name),
@@ -45,13 +60,9 @@ defmodule Mmlod.Item do
     {item, rest}
   end
 
-  defp load_content(data, size, offset) do
-    <<
-      _::binary-size(offset),
-      content::binary-size(size),
-      _::binary
-    >> = data
-
-    content
+  def load_content(source, size, offset) do
+    source
+    |> Utils.cut(size, offset)
+    |> Sprite.load()
   end
 end

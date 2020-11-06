@@ -1,29 +1,28 @@
 defmodule Mmlod.Lod do
-  defstruct [:signature, :version, :description, :data, :root]
+  defstruct [:signature, :version, :description, :root]
 
   alias Mmlod.Lod
   alias Mmlod.Item
   alias Mmlod.Utils
 
-  def load(data) do
+  def load(source) do
     <<
       signature::binary-size(4),
       version::binary-size(80),
       description::binary-size(80),
-      100::32-little,
-      0::32-little,
-      1::32-little,
-      _unknown::binary-size(80),
+      100::integer-unsigned-32-little,
+      0::integer-unsigned-32-little,
+      1::integer-unsigned-32-little,
+      _::binary-size(80),
       rest::binary
-    >> = data
+    >> = source
 
-    {[root], _} = Item.load(rest)
+    root = Item.load(rest)
 
     lod = %Lod{
       signature: Utils.clean(signature),
       version: Utils.clean(version),
       description: Utils.clean(description),
-      data: data,
       root: root
     }
 

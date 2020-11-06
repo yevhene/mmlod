@@ -1,5 +1,7 @@
 defmodule Mmlod do
   alias Mmlod.Lod
+  alias Mmlod.Sprite
+  alias Mmlod.Utils
 
   def main(args) do
     [file, resource] = args
@@ -11,7 +13,14 @@ defmodule Mmlod do
       |> Lod.load()
       |> Lod.find(resource)
 
-    {:ok, out} = File.open(resource, [:write])
-    IO.binwrite(out, item.content)
+    IO.inspect item
+
+    item.content
+    |> Sprite.image_data()
+    |> Utils.write_image(
+      item.content.width,
+      item.content.height,
+      "#{resource}.ppm"
+    )
   end
 end
