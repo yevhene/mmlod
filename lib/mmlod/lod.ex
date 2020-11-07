@@ -1,8 +1,12 @@
 defmodule Mmlod.Lod do
+  @moduledoc """
+  Module for processing LOD files
+  """
+
   defstruct [:signature, :version, :description, :root]
 
   alias Mmlod.Lod
-  alias Mmlod.Item
+  alias Mmlod.Node
   alias Mmlod.Utils
 
   def load(source) do
@@ -17,7 +21,7 @@ defmodule Mmlod.Lod do
       rest::binary
     >> = source
 
-    root = Item.load(rest)
+    root = Node.load(rest)
 
     lod = %Lod{
       signature: Utils.clean(signature),
@@ -30,8 +34,8 @@ defmodule Mmlod.Lod do
   end
 
   def find(%Lod{root: root}, name) do
-    Enum.find(root.items, fn item ->
-      String.downcase(List.to_string(item.name)) == String.downcase(name)
+    Enum.find(root.children, fn node ->
+      String.downcase(List.to_string(node.name)) == String.downcase(name)
     end)
   end
 end
@@ -40,8 +44,8 @@ defimpl String.Chars, for: Mmlod.Lod do
   alias Mmlod.Lod
 
   def to_string(%Lod{} = lod) do
-    lod.root.items
-    |> Enum.map(fn item -> List.to_string(item.name) end)
+    lod.root.children
+    |> Enum.map(fn node -> List.to_string(node.name) end)
     |> Enum.join("\n")
   end
 end

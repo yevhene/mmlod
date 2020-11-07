@@ -7,7 +7,7 @@ defmodule Mmlod.MixProject do
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
-      escript: [main_module: Mmlod],
+      escript: [main_module: Mmlod.CLI],
       aliases: aliases(),
       deps: deps()
     ]
@@ -22,7 +22,10 @@ defmodule Mmlod.MixProject do
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do
-    []
+    [
+      {:ex_cli, "~> 0.1.6"},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false}
+    ]
   end
 
   defp aliases do

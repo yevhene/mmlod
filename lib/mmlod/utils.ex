@@ -1,4 +1,8 @@
 defmodule Mmlod.Utils do
+  @moduledoc """
+  Various utilities
+  """
+
   def clean(binary) do
     binary
     |> :binary.bin_to_list()

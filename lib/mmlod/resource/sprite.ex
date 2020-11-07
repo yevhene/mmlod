@@ -1,16 +1,19 @@
-defmodule Mmlod.Sprite do
+defmodule Mmlod.Resource.Sprite do
+  @moduledoc """
+  Sprite Resource
+  """
+
   defstruct [
     :name,
     :size,
     :width,
     :height,
     :palette_id,
-    :texture_pitch,
     :decompressed_size,
     :data
   ]
 
-  alias Mmlod.Sprite
+  alias Mmlod.Resource.Sprite
   alias Mmlod.Utils
 
   def load(source) do
@@ -21,7 +24,7 @@ defmodule Mmlod.Sprite do
       height::integer-unsigned-16-little,
       palette_id::integer-unsigned-16-little,
       _::16,
-      texture_pitch::integer-unsigned-16-little,
+      _::16,
       _::16,
       decompressed_size::integer-unsigned-32-little,
       rest::binary
@@ -33,13 +36,12 @@ defmodule Mmlod.Sprite do
       width: width,
       height: height,
       palette_id: palette_id,
-      texture_pitch: texture_pitch,
       decompressed_size: decompressed_size,
-      data: rest
+      data: load_data(rest, width, height)
     }
   end
 
-  def image_data(%Sprite{height: height, width: width, data: data}) do
+  defp load_data(data, width, height) do
     {lines, rest} = load_lines(data, height)
 
     uncompressed = :zlib.uncompress(rest)

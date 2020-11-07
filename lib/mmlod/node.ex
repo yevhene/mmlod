@@ -1,4 +1,8 @@
-defmodule Mmlod.Item do
+defmodule Mmlod.Node do
+  @moduledoc """
+  Node in the LOD file. Can be folder or any resource
+  """
+
   defstruct [
     :name,
     :f,
@@ -6,33 +10,32 @@ defmodule Mmlod.Item do
     :size,
     :length,
     :priority,
-    items: nil,
+    children: nil,
     content: nil
   ]
 
-  alias Mmlod.Sprite
-  alias Mmlod.Item
+  alias Mmlod.Node
   alias Mmlod.Utils
 
   def load(source) do
-    {[item], _} = load(source, 1)
-    item
+    {[node], _} = load(source, 1)
+    node
   end
 
-  def load(source, count) do
+  defp load(source, count) do
     Enum.reduce(0..(count - 1), {[], source}, fn _, {list, rest} ->
-      {item, rest} = load_header(rest)
+      {node, rest} = load_header(rest)
 
-      {item, rest} =
-        if item.length > 0 do
-          {items, rest} = load(rest, item.length)
-          {%{item | items: items}, rest}
+      {node, rest} =
+        if node.length > 0 do
+          {children, rest} = load(rest, node.length)
+          {%{node | children: children}, rest}
         else
-          content = load_content(source, item.size, item.offset)
-          {%{item | content: content}, rest}
+          content = load_content(source, node.size, node.offset)
+          {%{node | content: content}, rest}
         end
 
-      {list ++ [item], rest}
+      {list ++ [node], rest}
     end)
   end
 
@@ -48,7 +51,7 @@ defmodule Mmlod.Item do
       rest::binary
     >> = source
 
-    item = %Item{
+    node = %Node{
       name: Utils.clean(name),
       f: f,
       offset: offset,
@@ -57,12 +60,11 @@ defmodule Mmlod.Item do
       priority: priority
     }
 
-    {item, rest}
+    {node, rest}
   end
 
-  def load_content(source, size, offset) do
+  defp load_content(source, size, offset) do
     source
     |> Utils.cut(size, offset)
-    |> Sprite.load()
   end
 end
