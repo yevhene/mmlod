@@ -1,10 +1,11 @@
-defmodule Mmlod.Resource.Image do
+defmodule Mmlod.Resource.Bitmap do
   @moduledoc """
-  Image Resource
+  Bitmap Resource
   """
 
   defstruct [
     :name,
+    :detail_level,
     :size,
     :width,
     :height,
@@ -19,12 +20,13 @@ defmodule Mmlod.Resource.Image do
     :data
   ]
 
-  alias Mmlod.Resource.Image
+  alias Mmlod.Resource.Bitmap
   alias Mmlod.Utils
 
   def load(source) do
     <<
       name::binary-size(16),
+      detail_level::integer-unsigned-32-little,
       size::integer-unsigned-32-little,
       width::integer-unsigned-16-little,
       height::integer-unsigned-16-little,
@@ -39,8 +41,9 @@ defmodule Mmlod.Resource.Image do
       data::binary
     >> = source
 
-    %Image{
+    %Bitmap{
       name: Utils.clean(name),
+      detail_level: detail_level,
       size: size,
       width: width,
       height: height,

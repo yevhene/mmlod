@@ -3,7 +3,11 @@ defmodule Mmlod.Command.Extract do
   Generic CLI command to extract resource from LOD file
   """
 
-  @types ["sprite"]
+  @types ["bitmap", "sprite"]
+
+  def run(%{type: "bitmap"} = context) do
+    Mmlod.Command.Extract.Bitmap.run(context)
+  end
 
   def run(%{type: "sprite"} = context) do
     Mmlod.Command.Extract.Sprite.run(context)
